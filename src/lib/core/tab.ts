@@ -60,61 +60,64 @@ export async function getTabsList(url: string): Promise<ApiResponseSearch> {
   return { results: tabs, pagination };
 }
 
-export async function getTab(
-  url: string,
-  width?: string,
-  height?: string,
-): Promise<ApiResponseTab> {
-  const { html, details } = await getPage(new URL(url), true);
+export async function getTab(url: string): Promise<ApiResponseTab> {
+  const { details } = await getPage(new URL(url), true);
   const { tab_view } = details.store.page.data;
 
-  const getTabinfo = async () => {
+  const {
+    tab_url,
+    artist_name,
+    song_name,
+    rating,
+    votes,
+    type,
+  }: TabScrapped = details.store.page.data.tab
 
-    const {
-      tab_url,
-      artist_name,
-      song_name,
-      rating,
-      votes,
-      type,
-    }: TabScrapped = details.store.page.data.tab
-    const tuning: string[] = tab_view?.meta?.tuning?.value?.split(' ') || [
+  const tuning: string[] =
+    tab_view?.meta?.tuning?.value?.split(' ')
+    ||
+    [
       'E',
       'A',
       'D',
       'G',
       'B',
       'E',
-    ]
-    const difficulty: string = tab_view?.ug_difficulty || 'unknown'
-    const raw_tabs: string = tab_view?.wiki_tab?.content || ''
-    const chordsDiagrams: UGChordCollection[] = tab_view?.applicature || []
-    const versions: TabScrapped[] =
-      tab_view?.versions.filter(
-        (tab: TabScrapped) => tab.type !== 'Official',
-      ) || []
-    let versionsFormatted: Tab[] = versions.map((tabScrapped) => {
-      return {
-        artist: tabScrapped.artist_name,
-        name: tabScrapped.song_name,
-        url: tabScrapped.tab_url,
-        difficulty: tabScrapped.difficulty,
-        numberRates: tabScrapped.votes,
-        type: tabScrapped.type,
-        slug: tabScrapped.tab_url.split('/').splice(-2).join('/'),
-        rating: parseFloat(tabScrapped.rating.toFixed(2)),
-      }
-    })
+    ];
 
-    if (Array.isArray(versionsFormatted)) {
-      versionsFormatted = versionsFormatted.sort(function (elem1, elem2) {
-        return (
-          elem2.rating * elem2.numberRates - elem1.rating * elem1.numberRates
-        )
-      })
-    }
+  const difficulty: string = tab_view?.ug_difficulty || 'unknown';
+  const raw_tabs: string = tab_view?.wiki_tab?.content || '';
+  const chordsDiagrams: UGChordCollection[] = tab_view?.applicature || [];
 
+  const versions: TabScrapped[] =
+    tab_view?.versions.filter((tab: TabScrapped) => tab.type !== 'Official') || [];
+
+  let versionsFormatted: Tab[] = versions.map((tabScrapped) => {
     return {
+      artist: tabScrapped.artist_name,
+      name: tabScrapped.song_name,
+      url: tabScrapped.tab_url,
+      difficulty: tabScrapped.difficulty,
+      numberRates: tabScrapped.votes,
+      type: tabScrapped.type,
+      slug: tabScrapped.tab_url.split('/').splice(-2).join('/'),
+      rating: parseFloat(tabScrapped.rating.toFixed(2)),
+    }
+  })
+
+  if (Array.isArray(versionsFormatted)) {
+    versionsFormatted = versionsFormatted.sort(function (elem1, elem2) {
+      return (
+        elem2.rating * elem2.numberRates - elem1.rating * elem1.numberRates
+      )
+    })
+  }
+
+  const { access_token } = await getSpotifyAccessToken()
+
+  return {
+    spotify_access_token: access_token,
+    tab: {
       artist: artist_name,
       name: song_name,
       url: tab_url,
@@ -135,12 +138,5 @@ export async function getTab(
         .replaceAll('[tab]', '<span>')
         .replaceAll('[/tab]', '</span>')
     }
-  }
-
-  const { access_token } = await getSpotifyAccessToken()
-
-  return {
-    tab: await getTabinfo(),
-    spotify_access_token: access_token
   }
 }

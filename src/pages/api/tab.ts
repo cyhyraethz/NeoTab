@@ -12,11 +12,8 @@ export default async function handlerTab(
     height: req.query.height as string,
   }
   if (formattedReq.url) {
-    let tabs = await getTab(
-      formattedReq.url,
-      formattedReq.width,
-      formattedReq.height,
-    )
+    let tabs = await getTab(formattedReq.url);
+
     if (tabs) {
       res.status(200).json(tabs)
     } else {
