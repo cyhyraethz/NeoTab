@@ -1,6 +1,10 @@
-# Neo Tab - A rework of [BenoitBellegarde/UltimateTab](https://github.com/BenoitBellegarde/UltimateTab)
+# Neo Tab (WIP)
 
 A fast, responsive interface to browse guitar tabs scraped from Ultimate Guitar.
+
+This is a rework of [BenoitBellegarde/UltimateTab](https://github.com/BenoitBellegarde/UltimateTab) which aims to clean up the original a bit.
+
+**_NOTE: This is very much still a work-in-progress_**
 
 <details closed>
 <summary>Desktop Screenshot</summary>
