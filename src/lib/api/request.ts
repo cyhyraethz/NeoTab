@@ -1,3 +1,4 @@
+import parse from 'node-html-parser'
 import { underscore } from '../utils/string'
 import { validateType, getTabsList } from '../core/tab'
 import type {
@@ -6,13 +7,31 @@ import type {
   ApiResponseSearch,
   Tab,
   TabScrapped,
-  PuppeteerOptions,
 } from '../../types/tabs'
-import puppeteer, { Page } from 'puppeteer'
-import {
-  PUPPETEER_BLOCK_RESSOURCE_NAME,
-  PUPPETEER_BLOCK_RESSOURCE_TYPE,
-} from '../../constants'
+
+export async function getPage(url: URL, details: boolean = false) {
+  const res = await fetch(url);
+
+  if (!res.ok) throw new Error("Failed to fetch tabs list");
+
+  const html = parse(await res.text());
+
+  return {
+    html,
+    details: details ? getPageDetails(html) : undefined
+  }
+}
+
+export function getPageDetails(html: ReturnType<typeof parse>) {
+  // Get store data
+  const raw = html.querySelector('.js-store[data-content]').getAttribute('data-content');
+  // Remove HTML entities
+  const flattened = parse(raw).innerText;
+  // Convert to JSON
+  const parsed = JSON.parse(flattened);
+
+  return parsed;
+}
 
 export async function search(args: ApiArgsSearch): Promise<ApiResponseSearch> {
   args = formatSearchQuery(args)
@@ -129,76 +148,4 @@ export function formatTabResult(tab: TabScrapped): Tab {
     slug: tab.tab_url.split('/').splice(-2).join('/'),
     rating: parseFloat(tab.rating.toFixed(2)),
   }
-}
-
-//Using puppeteer@6.0 and chrome-aws-lambda@6.0 to not exceed the AWS 50mb limit for the serverless functions
-export async function getPuppeteerConf(
-  options: PuppeteerOptions = {},
-): Promise<{ page: Page; browser: any }> {
-  const browser = await puppeteer.launch({
-    args: [
-      '--autoplay-policy=user-gesture-required',
-      '--disable-background-networking',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-breakpad',
-      '--disable-client-side-phishing-detection',
-      '--disable-component-update',
-      '--disable-default-apps',
-      '--disable-dev-shm-usage',
-      '--disable-domain-reliability',
-      '--disable-extensions',
-      '--disable-features=AudioServiceOutOfProcess',
-      '--disable-hang-monitor',
-      '--disable-ipc-flooding-protection',
-      '--disable-notifications',
-      '--disable-offer-store-unmasked-wallet-cards',
-      '--disable-popup-blocking',
-      '--disable-print-preview',
-      '--disable-prompt-on-repost',
-      '--disable-renderer-backgrounding',
-      '--disable-setuid-sandbox',
-      '--disable-speech-api',
-      '--disable-sync',
-      '--hide-scrollbars',
-      '--ignore-gpu-blacklist',
-      '--metrics-recording-only',
-      '--mute-audio',
-      '--no-default-browser-check',
-      '--no-first-run',
-      '--no-pings',
-      '--no-sandbox',
-      '--no-zygote',
-      '--password-store=basic',
-      '--use-gl=swiftshader',
-      '--use-mock-keychain',
-    ],
-    defaultViewport:
-      options.widthBrowser && options.heightBrowser
-        ? {
-          width: parseInt(options.widthBrowser) - 50,
-          height: parseInt(options.heightBrowser),
-        }
-        : null,
-    headless: 'new',
-  })
-
-  const page: Page = await browser.newPage()
-  // Block every ressources that we don't need to load
-  await page.setRequestInterception(true)
-  page.on('request', (request) => {
-    const requestUrl = request.url().split('?')[0]
-    if (
-      PUPPETEER_BLOCK_RESSOURCE_TYPE.includes(request.resourceType()) ||
-      PUPPETEER_BLOCK_RESSOURCE_NAME.some((resource) =>
-        requestUrl.includes(resource),
-      )
-    ) {
-      request.abort()
-    } else {
-      request.continue()
-    }
-  })
-
-  return { page, browser }
 }

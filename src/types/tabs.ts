@@ -97,12 +97,6 @@ export interface AutocompleteScrapped {
   suggestions: string[]
 }
 
-export interface PuppeteerOptions {
-  widthBrowser?: string
-  heightBrowser?: string
-  isMobile?: boolean
-}
-
 export type VexchordsChord = ('x' | number)[][]
 
 export type TabTypes = 'All' | 'Video' | 'Tab' | 'Chords' | 'Bass' | 'Ukulele'

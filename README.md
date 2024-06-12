@@ -25,7 +25,6 @@ A web application that delivers an enhanced, ads-free and fast responsive interf
 Ultimate Tab has been built with a modern stack, including:
 
 - [NextJS](https://nextjs.org/) - React Framework
-- [Puppeteer](https://pptr.dev/) - Headless browser used for web scraping
 - [React Query](https://tanstack.com/query/v3/) - Server state management
 - [React Context API](https://react.dev/reference/react#context-hooks) - Client state management
 - [ChakraUI](https://chakra-ui.com/) - UI Component Library
