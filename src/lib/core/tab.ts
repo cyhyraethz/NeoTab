@@ -128,6 +128,12 @@ export async function getTab(
       versions: versionsFormatted,
       chordsDiagrams,
       htmlTab: `<pre>${tab_view.wiki_tab.content}</pre>`
+        // Parse chords
+        .replaceAll('[ch]', '<span class="text-chord">')
+        .replaceAll('[/ch]', '</span>')
+        // Parse tabs
+        .replaceAll('[tab]', '<span>')
+        .replaceAll('[/tab]', '</span>')
     }
   }
 

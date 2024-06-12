@@ -14,6 +14,7 @@ export const extendedTheme = extendTheme({
         background:
           props.colorMode === 'dark' ? 'rgba(226, 232, 240, 0.16)' : '#EDF2F7',
         padding: '0.01rem 0.15rem',
+        borderRadius: '2px'
       },
       'pre, code': {
         fontFamily: `'Poppins Mono', monospace !important`,
@@ -26,9 +27,9 @@ export const extendedTheme = extendTheme({
         bgColor: props.colorMode === 'dark' && 'twitter.600 !important',
       },
       '.rswp_progress,.rswp_duration,._ControlsButtonsRSWP,._VolumeInlineRSWP,._DevicesRSWP button,._ContentRSWP a':
-        {
-          color: props.colorMode === 'dark' && 'gray.300  !important',
-        },
+      {
+        color: props.colorMode === 'dark' && 'gray.300  !important',
+      },
       '._ContentWrapperRSWP path': {
         fill: props.colorMode === 'dark' && 'gray.300  !important',
       },
