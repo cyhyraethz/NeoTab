@@ -52,7 +52,7 @@ export default function AutocompleteInput({
       <InputLeftElement
         h={'100%'}
         cursor={'pointer'}
-        onClick={() => router.pathname !== '/search' && router.push('/search')}
+        onClick={() => router.pathname !== '/' && router.push('/')}
       >
         <SearchIcon color="gray.300" />
       </InputLeftElement>
@@ -73,8 +73,8 @@ export default function AutocompleteInput({
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            if (router.pathname !== '/search') {
-              router.push('/search')
+            if (router.pathname !== '/') {
+              router.push('/')
             }
             let valueToSearch = formatSuggestion(valueAC)
             if (
@@ -126,8 +126,8 @@ export default function AutocompleteInput({
             className="tab-result"
             key={index}
             onClick={(e) => {
-              if (router.pathname !== '/search') {
-                router.push('/search')
+              if (router.pathname !== '/') {
+                router.push('/')
               }
               const suggestion = formatSuggestion(result)
               setValueAC(suggestion)
