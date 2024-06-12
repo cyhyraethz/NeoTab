@@ -176,9 +176,9 @@ export async function getPuppeteerConf(
     defaultViewport:
       options.widthBrowser && options.heightBrowser
         ? {
-            width: parseInt(options.widthBrowser) - 50,
-            height: parseInt(options.heightBrowser),
-          }
+          width: parseInt(options.widthBrowser) - 50,
+          height: parseInt(options.heightBrowser),
+        }
         : null,
     headless: 'new',
   })
