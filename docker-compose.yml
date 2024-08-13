@@ -1,0 +1,26 @@
+services:
+    ultimate-tab:
+        container_name: ultimate-tab
+        build: git@github.com:cyhyraethz/NeoTab.git
+        restart: unless-stopped
+        networks:
+            - traefik
+        ports:
+            - 127.0.0.1:3007:3000
+        environment:
+            - TZ=America/Los_Angeles
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.ultimate-tab.rule=Host(`ultimate-tab.domain.tld`)
+            - traefik.http.routers.ultimate-tab.entrypoints=https
+            - traefik.http.routers.ultimate-tab.tls=true
+            - traefik.http.routers.ultimate-tab.tls.certresolver=cloudflare
+            - homepage.group=Homepage Category
+            - homepage.name=Ultimate Tab
+            - homepage.icon=/icons/ultimate-tab.png
+            - homepage.href=https://ultimate-tab.domain.tld
+            - homepage.description=Guitar Chords
+
+networks:
+    traefik:
+        external: true
